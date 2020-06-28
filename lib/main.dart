@@ -10,7 +10,13 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'Welcome to Flutter', home: RandomWords());
+    return MaterialApp(
+      title: 'Welcome to Flutter',
+      home: RandomWords(),
+      theme: ThemeData(
+          primaryColor: Colors.green,
+          textTheme: TextTheme(headline1: TextStyle(color: Colors.red))),
+    );
   }
 }
 
@@ -29,8 +35,36 @@ class _RandomWordsState extends State<RandomWords> {
     return Scaffold(
         appBar: AppBar(
           title: Text("Name generator"),
+          actions: <Widget>[
+            IconButton(icon: Icon(Icons.list), onPressed: _pushSaved)
+          ],
         ),
         body: _buildSuggestions());
+  }
+
+  void _pushSaved() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (BuildContext context) {
+      final tiles = _saved.map((WordPair pair) {
+        return ListTile(
+          title: Text(
+            pair.asPascalCase,
+            style: _biggerFont,
+          ),
+        );
+      });
+      final dividerTiles =
+          ListTile.divideTiles(tiles: tiles, context: context).toList();
+
+      return Scaffold(
+        appBar: AppBar(
+          title: Text("Saved suggestions"),
+        ),
+        body: ListView(
+          children: dividerTiles,
+        ),
+      );
+    }));
   }
 
   Widget _buildSuggestions() {
